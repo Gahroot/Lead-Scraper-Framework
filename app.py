@@ -9,7 +9,27 @@ from dotenv import load_dotenv
 from scraper import ScraperError, search_leads
 from website_scraper import enrich_leads
 
-load_dotenv()
+ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+load_dotenv(ENV_PATH)
+
+
+def _read_env_key():
+    """Read the API key fresh from the .env file."""
+    if os.path.exists(ENV_PATH):
+        with open(ENV_PATH) as f:
+            for line in f:
+                if line.startswith("GOOGLE_PLACES_API_KEY="):
+                    val = line.split("=", 1)[1].strip()
+                    if val and val != "your_key_here":
+                        return val
+    return ""
+
+
+def _save_env_key(key):
+    """Write the API key to the .env file."""
+    with open(ENV_PATH, "w") as f:
+        f.write(f"GOOGLE_PLACES_API_KEY={key}\n")
+
 
 # Page setup
 st.set_page_config(page_title="PRESTYJ Lead Scraper", layout="wide")
@@ -21,29 +41,28 @@ with st.sidebar:
     # API Key section
     st.header("Google API Key")
 
-    env_key = os.getenv("GOOGLE_PLACES_API_KEY", "")
-    has_env_key = bool(env_key and env_key != "your_key_here")
+    saved_key = _read_env_key()
 
-    if has_env_key:
-        st.success("API key loaded from .env file")
+    if saved_key:
+        st.success("API key saved in .env file")
     else:
-        st.warning("No API key found in .env file")
+        st.warning("No API key found — paste one below")
 
     api_key_input = st.text_input(
         "Paste your API key here",
+        key="api_key_field",
         type="password",
         placeholder="AIzaSy...",
-        help="Your key is only used for this session and never stored online.",
+        help="Click 'Save Key' to store it in your .env file so you don't have to paste it again.",
     )
 
     col_save, col_get, col_help = st.columns(3)
     with col_save:
         if st.button("Save Key"):
-            if api_key_input:
-                env_path = os.path.join(os.path.dirname(__file__), ".env")
-                with open(env_path, "w") as f:
-                    f.write(f"GOOGLE_PLACES_API_KEY={api_key_input}\n")
-                st.success("Saved!")
+            key_to_save = st.session_state.get("api_key_field", "")
+            if key_to_save:
+                _save_env_key(key_to_save)
+                st.session_state["key_just_saved"] = True
                 st.rerun()
             else:
                 st.warning("Paste a key first")
@@ -59,13 +78,16 @@ with st.sidebar:
             "https://developers.google.com/maps/documentation/places/web-service/get-api-key",
         )
 
-    # Use the manually entered key, or fall back to .env
-    active_key = api_key_input if api_key_input else (env_key if has_env_key else "")
+    if st.session_state.pop("key_just_saved", False):
+        st.success("API key saved! You're all set.")
+
+    # Use the manually entered key, or fall back to saved .env key
+    active_key = api_key_input if api_key_input else saved_key
 
     if active_key:
         st.success("API key active")
     else:
-        st.info("Enter an API key above or add one to your .env file to get started.")
+        st.info("Enter an API key above to get started.")
 
     st.divider()
 
