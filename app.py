@@ -36,7 +36,17 @@ with st.sidebar:
         help="Your key is only used for this session and never stored online.",
     )
 
-    col_get, col_help = st.columns(2)
+    col_save, col_get, col_help = st.columns(3)
+    with col_save:
+        if st.button("Save Key"):
+            if api_key_input:
+                env_path = os.path.join(os.path.dirname(__file__), ".env")
+                with open(env_path, "w") as f:
+                    f.write(f"GOOGLE_PLACES_API_KEY={api_key_input}\n")
+                st.success("Saved!")
+                st.rerun()
+            else:
+                st.warning("Paste a key first")
     with col_get:
         st.link_button(
             "Get a Key",
