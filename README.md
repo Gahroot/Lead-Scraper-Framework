@@ -4,6 +4,8 @@
 
 Built by [PRESTYJ](https://prestyj.com) — Luxury AI Sales Agents for Appointment Setting.
 
+### [Join The PRESTYJ Blueprint (Free Community) — Learn how to use this tool and build your own AI sales system step by step](https://www.skool.com/the-prestyj-blueprint-7395/about)
+
 ---
 
 ## Quick Start
@@ -94,8 +96,8 @@ Make sure you activated the virtual environment first:
 
 ## Links
 
+- **[Join The PRESTYJ Blueprint — Free Skool Community](https://www.skool.com/the-prestyj-blueprint-7395/about)**
 - [PRESTYJ Website](https://prestyj.com)
-- [The PRESTYJ Blueprint (Skool Community)](https://skool.com/prestyj)
 - [Google Cloud Console](https://console.cloud.google.com/)
 
 ---
