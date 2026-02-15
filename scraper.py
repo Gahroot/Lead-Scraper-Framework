@@ -54,13 +54,14 @@ def _format_place(place):
     }
 
 
-def search_leads(business_type, location, max_results=20):
+def search_leads(business_type, location, max_results=20, api_key=None):
     """Search Google Places for businesses and return a list of leads.
 
     Args:
         business_type: What kind of business (e.g. "plumbers")
         location: City or area (e.g. "Austin, TX")
         max_results: How many results you want (1-60)
+        api_key: Google Places API key (falls back to .env file if not provided)
 
     Returns:
         A list of dictionaries, one per business found.
@@ -68,9 +69,10 @@ def search_leads(business_type, location, max_results=20):
     Raises:
         ScraperError: If something goes wrong (bad API key, network issue, etc.)
     """
-    if not API_KEY:
+    key = api_key or API_KEY
+    if not key:
         raise ScraperError(
-            "No API key found. Open your .env file and add your Google Places API key."
+            "No API key found. Add your Google Places API key to continue."
         )
 
     query = f"{business_type} in {location}"
@@ -79,7 +81,7 @@ def search_leads(business_type, location, max_results=20):
 
     session = requests.Session()
     session.headers.update({
-        "X-Goog-Api-Key": API_KEY,
+        "X-Goog-Api-Key": key,
         "Content-Type": "application/json",
         "X-Goog-FieldMask": FIELD_MASK,
     })
