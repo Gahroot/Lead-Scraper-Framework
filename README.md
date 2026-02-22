@@ -46,6 +46,15 @@ streamlit run app.py
 
 Your browser will open automatically with the lead scraper tool.
 
+### Manual Setup (if not using the setup script)
+```bash
+cd prestyj-lead-scraper
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+streamlit run app.py
+```
+
 ---
 
 ## Getting a Google Places API Key
